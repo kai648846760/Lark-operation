@@ -1,14 +1,13 @@
 # Lark-operation
 
-```
-python
+```python
 pip install https://lf3-static.bytednsdoc.com/obj/eden-cn/lmeh7phbozvhoz/base-open-sdk/baseopensdk-0.0.13-py3-none-any.whl
 
 pip3 install legacy-cgi 
 ```
 
 
-
+```python-repl
 try:
         # 1. 初始化客户端
         lark = LarkBitable(APP_TOKEN, PERSONAL_TOKEN)
@@ -68,3 +67,5 @@ try:
 
     except Exception as e:
         print(f"程序执行异常: {str(e)}")
+
+```
