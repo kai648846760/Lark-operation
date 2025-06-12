@@ -53,7 +53,9 @@ class TestCaseExecutor:
                 "响应体": "",
                 "响应时间": "",
                 "响应状态码": "",
-                "是否通过": ""
+                "是否通过": "",
+                "日期": ""
+
             }
             if self.lark.update_record(self.test_table_id, record_id, fields_to_clear):
                 success_count += 1
@@ -76,7 +78,6 @@ class TestCaseExecutor:
         test_cases.sort(key=lambda x: int(x["fields"].get("接口编号", "999")))
 
         for i, test_case in enumerate(test_cases, 1):
-            # print(test_case, '----<<')
             record_id = test_case["record_id"]
             interface_id = test_case["fields"].get("接口编号", "未设置")
             interface_path = test_case["fields"].get("接口路径", "无路径")
@@ -85,7 +86,10 @@ class TestCaseExecutor:
             print(f"接口编号: {interface_id}, 路径: {interface_path}")
 
             result = self.execute_test_case(test_case['fields'])
+            result['响应体'] = json.dumps(result['响应体'], ensure_ascii=False)
             self.lark.update_record(self.test_table_id, record_id, result)
+            print(test_case, '----<<>>>', result,
+                  self.test_table_id, 'record_id', record_id)
             time.sleep(0.5)
 
         print("\n=== 测试执行完成 ===")
@@ -96,7 +100,8 @@ class TestCaseExecutor:
             "响应体": "",
             "响应时间": "",
             "响应状态码": "",
-            "是否通过": "FAIL"
+            "是否通过": "FAIL",
+            "日期": time.time()*1000//1
         }
 
         print("--- 请求准备 ---", test_case, '--------<<<')
@@ -184,14 +189,46 @@ class TestCaseExecutor:
 
         return result
 
+    # def _resolve_references(self, content: str) -> str:
+    #     """解析引用并记录日志"""
+    #     if not content or not isinstance(content, str):
+    #         return content
+
+    #     print("\n--- 变量引用解析 ---")
+    #     print(f"待解析内容: {content}")
+
+    #     pattern = r'\$(\d+)\.([\w\.]+)'
+    #     matches = re.findall(pattern, content)
+
+    #     if not matches:
+    #         print("未找到变量引用")
+    #         return content
+
+    #     print(f"找到 {len(matches)} 处变量引用")
+    #     for interface_id, field_path in matches:
+    #         if interface_id in self.response_cache:
+    #             response_data = self.response_cache[interface_id]
+    #             value = self._get_nested_value(response_data, field_path)
+    #             if value is not None:
+    #                 content = content.replace(
+    #                     f"${interface_id}.{field_path}", str(value))
+    #                 print(f"解析 {interface_id}.{field_path} = {value}")
+    #             else:
+    #                 print(f"警告: 无法解析 {interface_id}.{field_path}")
+    #         else:
+    #             print(f"警告: 未找到接口 {interface_id} 的响应缓存")
+
+    #     print(f"解析后内容: {content}")
+    #     return content
     def _resolve_references(self, content: str) -> str:
-        """解析引用并记录日志"""
+        """解析引用并记录日志（改进版）"""
         if not content or not isinstance(content, str):
             return content
 
         print("\n--- 变量引用解析 ---")
         print(f"待解析内容: {content}")
 
+        # 匹配 $接口编号.字段名 格式的引用
         pattern = r'\$(\d+)\.([\w\.]+)'
         matches = re.findall(pattern, content)
 
@@ -200,21 +237,37 @@ class TestCaseExecutor:
             return content
 
         print(f"找到 {len(matches)} 处变量引用")
+
+        # 创建一个副本进行替换，避免修改原始字符串
+        resolved_content = content
+
         for interface_id, field_path in matches:
             if interface_id in self.response_cache:
                 response_data = self.response_cache[interface_id]
                 value = self._get_nested_value(response_data, field_path)
+
                 if value is not None:
-                    content = content.replace(
-                        f"${interface_id}.{field_path}", str(value))
-                    print(f"解析 {interface_id}.{field_path} = {value}")
+                    # 将值转换为字符串
+                    value_str = str(value)
+
+                    # 特殊处理：如果值是字符串，添加引号
+                    if isinstance(value, str):
+                        # 转义引号
+                        value_str = value_str.replace('"', '\\"')
+                        value_str = f'"{value_str}"'
+
+                    # 直接替换完整的引用
+                    ref = f"${interface_id}.{field_path}"
+                    resolved_content = resolved_content.replace(ref, value_str)
+
+                    print(f"解析 {ref} = {value}")
                 else:
                     print(f"警告: 无法解析 {interface_id}.{field_path}")
             else:
                 print(f"警告: 未找到接口 {interface_id} 的响应缓存")
 
-        print(f"解析后内容: {content}")
-        return content
+        print(f"解析后内容: {resolved_content}")
+        return resolved_content
 
     def _get_nested_value(self, data, path: str):
         """获取嵌套值并记录日志"""
