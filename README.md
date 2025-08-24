@@ -59,7 +59,7 @@
 
 ```bash
 # 1. 克隆项目
-git clone https://github.com/your-repo/Lark-operation.git
+git clone https://github.com/kai648846760/Lark-operation.git
 cd Lark-operation
 
 # 2. 安装依赖
@@ -83,22 +83,41 @@ python -m lark_tester.cli --version
 编辑 `config/production.yaml`：
 
 ```yaml
-lark:
-  # 必填：个人授权码
-  personal_token: "pt-your-personal-token-here"  
-  
-  # 必填：应用Token（从表格URL提取）
-  app_token: "your-app-token"  
-  
-  # 必填：表格ID（从表格URL提取）
-  table_id: "your-table-id"   
-  
-  # 可选：API域名（默认国际版）
-  api_domain: "https://open.larksuite.com"  
+# Lark API 自动化测试框架 - 生产环境配置
 
-log:
-  level: "INFO"
-  format: "%(asctime)s - %(levelname)s - %(message)s"
+# ================== Lark 配置 ==================
+# 生产环境的飞书多维表格认证信息
+personal_token: "pt-your-personal-token-here"
+app_token: "your-app-token"
+table_id: "your-table-id"
+config_table_id: "your-config-table-id"  # 配置表ID，可根据实际情况修改
+domain: "https://base-api.larksuite.com"
+
+# ================== API 测试配置 ==================
+# 生产环境的API配置（从配置表读取）
+api_base_url: ""    # 从配置表动态读取，配置表字段: Host｜是否开启｜备注
+request_timeout: 60 # 生产环境超时时间更长
+max_retries: 5      # 生产环境重试次数更多
+retry_delay: 2.0    # 重试延迟更长
+request_delay: 0.5  # 生产环境请求间隔，避免对服务器压力过大
+
+# ================== 日志配置 ==================
+log_level: "INFO"   # 生产环境使用INFO级别
+enable_rich_logging: true
+
+# ================== 其他配置 ==================
+max_response_length: 5000  # 生产环境响应体长度限制更大
+enable_assertions: true
+fail_fast: false
+
+# ================== 生产环境特殊配置 ==================
+# 生产环境安全配置
+validate_ssl: true
+user_agent: "lark-api-tester/1.0.0 (production)"
+
+# 性能配置
+batch_size: 10      # 批量处理大小
+concurrent_limit: 3 # 并发限制
 ```
 
 #### 步骤3: 从URL提取配置信息
@@ -226,12 +245,8 @@ Lark-operation/
 ├── config/                     # 配置文件
 │   ├── production.yaml        # 生产环境配置
 │   └── development.yaml       # 开发环境配置
-├── docs/                      # 文档
-│   ├── field_usage_guide.md   # 字段使用指南
-│   └── context_management_design.md  # 上下文设计
 ├── examples/                  # 示例代码
-└── scripts/                   # 工具脚本
-    └── validate_table.py      # 表格验证脚本
+└── field_usage_guide.md       # 字段使用指南
 ```
 
 ## 🔧 核心技术特性
@@ -282,9 +297,6 @@ client.delete_field("tbl123", "fld456")
 ## 📖 详细文档
 
 - **[字段使用指南](field_usage_guide.md)** - 详细的字段说明和最佳实践
-- **[上下文管理设计](context_management_design.md)** - 变量管理和引用功能设计
-- **[API文档](docs/api.md)** - 完整的API接口文档
-- **[故障排除](docs/troubleshooting.md)** - 常见问题解决方案
 
 ## 🛠️ 开发指南
 
@@ -292,7 +304,7 @@ client.delete_field("tbl123", "fld456")
 
 ```bash
 # 克隆项目
-git clone <repository-url>
+git clone https://github.com/kai648846760/Lark-operation.git
 cd Lark-operation
 
 # 创建虚拟环境
@@ -302,7 +314,6 @@ source venv/bin/activate  # Linux/macOS
 
 # 安装开发依赖
 pip install -r requirements.txt
-pip install -r requirements-dev.txt
 
 # 运行测试
 python -m pytest tests/
@@ -314,16 +325,6 @@ python -m pytest tests/
 - **类型提示**: 使用type hints提高代码可读性
 - **文档字符串**: 所有公共方法都要有docstring
 - **单元测试**: 核心功能必须有测试覆盖
-
-### 贡献流程
-
-1. Fork项目到个人仓库
-2. 创建功能分支: `git checkout -b feature/新功能`
-3. 编写代码和测试
-4. 确保所有测试通过: `python -m pytest`
-5. 提交代码: `git commit -m "Add: 新功能描述"`
-6. 推送分支: `git push origin feature/新功能`
-7. 创建Pull Request
 
 ## 🐛 故障排除
 
@@ -385,51 +386,9 @@ python -c "from lark_tester.core import LarkClient; print('连接正常')"
 - **异步执行**: 大量用例可考虑并发执行
 - **分页处理**: 大数据集自动分页加载
 
-## 🏆 版本历史
-
-### v2.0.0 (2024-12-25)
-- 🎉 **重大更新**: 表格字段从31个精简至13个
-- 🔧 **字段管理**: 完整的字段CRUD操作支持
-- 🚀 **性能优化**: 基于原始baseopensdk重构
-- 📝 **文档完善**: 详细的使用指南和最佳实践
-
-### v1.5.0 (2024-11-20)
-- ✨ 新增断言规则支持
-- 🔧 改进错误处理机制
-- 📊 优化结果回写性能
-
-### v1.0.0 (2024-10-15)
-- 🎉 首个正式版本发布
-- 🏗️ 基础框架搭建完成
-- 📋 核心功能实现
-
-## 🤝 社区支持
-
-### 获取帮助
-
-- **GitHub Issues**: [提交问题](https://github.com/your-repo/issues)
-- **讨论区**: [参与讨论](https://github.com/your-repo/discussions)
-- **Wiki**: [查看Wiki](https://github.com/your-repo/wiki)
-
-### 贡献方式
-
-- 🐛 **报告Bug**: 通过Issues报告问题
-- ✨ **功能建议**: 提出新功能想法
-- 📝 **改进文档**: 完善文档和示例
-- 💻 **代码贡献**: 提交代码改进
-
 ## 📄 许可证
 
 MIT License - 详见 [LICENSE](LICENSE) 文件
-
-## 🙏 致谢
-
-感谢以下项目和贡献者：
-
-- **飞书开放平台**: 提供强大的API支持
-- **baseopensdk**: 原始SDK实现参考
-- **requests**: 现代化HTTP库
-- **所有贡献者**: 让这个项目变得更好
 
 ---
 
@@ -439,6 +398,12 @@ MIT License - 详见 [LICENSE](LICENSE) 文件
 
 *基于飞书多维表格的现代化测试解决方案*
 
-[快速开始](#-快速开始) • [使用指南](#-使用指南) • [API文档](docs/api.md) • [贡献指南](#-开发指南)
+[快速开始](#-快速开始) • [使用指南](#-使用指南) • [字段使用指南](field_usage_guide.md) • [贡献指南](#-开发指南)
 
 </div>
+
+---
+
+如果这个项目对您有帮助，请给一个 ⭐ Star 以表示支持！您的支持是我们持续改进的动力。
+
+[![Star History Chart](https://api.star-history.com/svg?repos=kai648846760/Lark-operation&type=Date)](https://star-history.com/#kai648846760/Lark-operation&Date)
