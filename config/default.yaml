@@ -1,0 +1,46 @@
+# Lark API 自动化测试框架 - 默认配置
+
+# ================== Lark 配置 ==================
+# 飞书多维表格认证信息
+personal_token: ""  # 个人访问令牌，格式: pt-xxxxxxx
+app_token: ""       # 应用令牌
+table_id: ""        # 表格ID
+config_table_id: "" # 配置表ID，存放API域名等配置信息
+domain: "https://base-api.larksuite.com"  # Lark API域名
+
+# ================== API 测试配置 ==================
+# HTTP请求配置
+api_base_url: ""    # API基础URL，如果测试用例中是完整URL则此项可为空
+request_timeout: 30 # 请求超时时间(秒)
+max_retries: 3      # 最大重试次数
+retry_delay: 1.0    # 重试延迟(秒)
+request_delay: 0    # 请求间隔(秒)，避免请求过于频繁
+
+# ================== 日志配置 ==================
+log_level: "INFO"   # 日志级别: DEBUG, INFO, WARNING, ERROR, CRITICAL
+log_format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+enable_rich_logging: true  # 是否启用彩色日志输出
+
+# ================== 其他配置 ==================
+max_response_length: 2000  # 响应体最大长度限制
+enable_assertions: true    # 是否启用断言验证
+fail_fast: false          # 遇到失败是否立即停止
+
+# ================== 表格字段映射 ==================
+# 如果表格字段名不同，可以在这里配置映射关系
+field_mappings:
+  test_id: "接口编号"
+  test_name: "接口名称"
+  api_path: "接口路径"
+  method: "请求方法"
+  headers: "请求头"
+  body: "请求体"
+  expected_status: "预期状态码"
+  assertion_rules: "断言规则"
+  actual_status: "实际状态码"
+  response_body: "响应体"
+  response_time: "响应时间"
+  test_result: "是否通过"
+  error_message: "错误信息"
+  execute_time: "执行时间"
+  update_time: "更新时间"

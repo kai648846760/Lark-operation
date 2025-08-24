@@ -1,0 +1,26 @@
+{
+  "development": {
+    "base_url": "https://dev-api.example.com",
+    "timeout": 10,
+    "debug": true,
+    "headers": {
+      "User-Agent": "ApiTest-Dev/1.0"
+    }
+  },
+  "testing": {
+    "base_url": "https://test-api.example.com",
+    "timeout": 5,
+    "debug": true,
+    "headers": {
+      "User-Agent": "ApiTest-Test/1.0"
+    }
+  },
+  "production": {
+    "base_url": "https://api.example.com",
+    "timeout": 30,
+    "debug": false,
+    "headers": {
+      "User-Agent": "ApiTest-Prod/1.0"
+    }
+  }
+}

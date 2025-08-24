@@ -1,0 +1,35 @@
+# Lark API 自动化测试框架 - 生产环境配置
+
+# ================== Lark 配置 ==================
+# 生产环境的飞书多维表格认证信息
+personal_token: "pt-CNVPlr8MqYPOTCBoYuJ_jQtCU8Nf46BPXlPE5WSKAQAAAkCAygSAwRqXvIsh"
+app_token: "UMlnbC7J4aP63AscoX9cdovCn7f"
+table_id: "tblIiquTXHImD3n6"
+config_table_id: "tblUZ7hYfKcKK825"  # 配置表ID，可根据实际情况修改
+domain: "https://base-api.larksuite.com"
+
+# ================== API 测试配置 ==================
+# 生产环境的API配置（从配置表读取）
+api_base_url: ""    # 从配置表动态读取，配置表字段: Host｜是否开启｜备注
+request_timeout: 60 # 生产环境超时时间更长
+max_retries: 5      # 生产环境重试次数更多
+retry_delay: 2.0    # 重试延迟更长
+request_delay: 0.5  # 生产环境请求间隔，避免对服务器压力过大
+
+# ================== 日志配置 ==================
+log_level: "INFO"   # 生产环境使用INFO级别
+enable_rich_logging: true
+
+# ================== 其他配置 ==================
+max_response_length: 5000  # 生产环境响应体长度限制更大
+enable_assertions: true
+fail_fast: false
+
+# ================== 生产环境特殊配置 ==================
+# 生产环境安全配置
+validate_ssl: true
+user_agent: "lark-api-tester/1.0.0 (production)"
+
+# 性能配置
+batch_size: 10      # 批量处理大小
+concurrent_limit: 3 # 并发限制
