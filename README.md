@@ -317,7 +317,7 @@ source venv/bin/activate  # Linux/macOS
 pip install -r requirements.txt
 
 # 运行测试
-python -m pytest tests/
+python -m lark_tester.cli run-tests
 ```
 
 ### 代码规范

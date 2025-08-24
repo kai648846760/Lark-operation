@@ -1,0 +1,22 @@
+# 核心依赖
+requests>=2.31.0
+PyYAML>=6.0
+click>=8.1.0
+rich>=13.0.0
+
+# Python 3.11以下版本需要的依赖
+typing-extensions>=4.8.0; python_version < "3.11"
+
+# Lark SDK依赖 - 需要特殊安装方式
+# 安装命令: pip install https://lf3-static.bytednsdoc.com/obj/eden-cn/lmeh7phbozvhoz/base-open-sdk/baseopensdk-0.0.13-py3-none-any.whl
+# baseopensdk==0.0.13
+
+# 兼容性依赖
+legacy-cgi
+
+# 开发依赖（可选）
+# pytest>=6.0.0
+# pytest-cov>=2.0.0
+# black>=21.0.0
+# flake8>=3.8.0
+# mypy>=0.812
