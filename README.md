@@ -54,6 +54,7 @@
 - **Python**: 3.8+ 
 - **飞书账号**: 具备多维表格访问权限
 - **网络**: 能访问 `https://open.larksuite.com`
+- **复制该表**: https://d64xj2xqay.feishu.cn/base/UMlnbC7J4aP63AscoX9cdovCn7f?from=from_copylink
 
 ### ⚡ 快速安装
 
